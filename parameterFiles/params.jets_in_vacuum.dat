@@ -1,0 +1,26 @@
+# This is an example parameter file.
+# Let's write output to another file:
+LOGFILE logs/jets_vacuum_nevt_10000_test.log
+HEPMCFILE eventFiles/jets_vacuum_nevt_10000_test.hepmc
+# for random number generation
+NJOB 2
+#only run 100 events to test
+NEVENT 10000
+#change root s to LHC run 2 energies
+SQRTS 5020
+# specify dijet production
+PROCESS PPJJ
+# Let's change the generation phase space:
+PTMIN 60
+PTMAX -1
+ETAMAX 2.5
+# oversampling power
+WEXPO 0
+# this is to include recoil effects
+KEEPRECOILS T
+# to write the output necessary for subtraction of the thermal momentum components
+WRITESCATCEN T
+# to write out dummy particles (needed for 4MomSub subtraction)
+WRITEDUMMIES T
+# And we also want to change the medium parameters:
+MEDIUMPARAMS medium.params.dat

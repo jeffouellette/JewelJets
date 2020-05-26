@@ -1,0 +1,25 @@
+# This is an example parameter file.
+# Let's write output to another file:
+LOGFILE logs/RHIC_photonjets_medium_nevt_1000_Temp400MeV.log
+HEPMCFILE eventFiles/RHIC_photonjets_medium_nevt_1000_Temp400MeV.hepmc
+# for random number generation
+NJOB 8
+#how many events to run
+NEVENT 1000
+#change root s to LHC run 2 energies
+SQRTS 200
+# specify dijet production
+PROCESS PPYJ
+# Let's change the generation phase space:
+PTMIN 30.
+PTMAX -1.
+# to avoid pT sampling set exponent weight to 0
+WEXPO 0
+# this is to include recoil effects
+KEEPRECOILS T
+# to write the output necessary for subtraction of the thermal momentum components
+WRITESCATCEN T
+# to write out dummy particles (needed for 4MomSub subtraction)
+WRITEDUMMIES T
+# And we also want to change the medium parameters:
+MEDIUMPARAMS RHIC.medium.params.dat
