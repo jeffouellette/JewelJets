@@ -114,13 +114,13 @@ float akt1_jet_pt_4MomSub[100];
 float akt1_jet_eta_4MomSub[100];
 float akt1_jet_phi_4MomSub[100];
 float akt1_jet_e_4MomSub[100];
-
+/*
 int akt4_jet_n_GridSub1 = 0;
 float akt4_jet_pt_GridSub1[100];
 float akt4_jet_eta_GridSub1[100];
 float akt4_jet_phi_GridSub1[100];
 float akt4_jet_e_GridSub1[100];
-
+*/
 int akt4_jet_n_GridSub2 = 0;
 float akt4_jet_pt_GridSub2[100];
 float akt4_jet_eta_GridSub2[100];
@@ -208,13 +208,13 @@ outTree->Branch ("akt1_jet_pt_4MomSub",   &akt1_jet_pt_4MomSub,   "akt1_jet_pt_4
 outTree->Branch ("akt1_jet_eta_4MomSub",  &akt1_jet_eta_4MomSub,  "akt1_jet_eta_4MomSub[akt1_jet_n_4MomSub]/F");
 outTree->Branch ("akt1_jet_phi_4MomSub",  &akt1_jet_phi_4MomSub,  "akt1_jet_phi_4MomSub[akt1_jet_n_4MomSub]/F");
 outTree->Branch ("akt1_jet_e_4MomSub",    &akt1_jet_e_4MomSub,    "akt1_jet_e_4MomSub[akt1_jet_n_4MomSub]/F");
-
+/*
 outTree->Branch ("akt4_jet_n_GridSub1",    &akt4_jet_n_GridSub1,    "akt4_jet_n_GridSub1/I");
 outTree->Branch ("akt4_jet_pt_GridSub1",   &akt4_jet_pt_GridSub1,   "akt4_jet_pt_GridSub1[akt4_jet_n_GridSub1]/F");
 outTree->Branch ("akt4_jet_eta_GridSub1",  &akt4_jet_eta_GridSub1,  "akt4_jet_eta_GridSub1[akt4_jet_n_GridSub1]/F");
 outTree->Branch ("akt4_jet_phi_GridSub1",  &akt4_jet_phi_GridSub1,  "akt4_jet_phi_GridSub1[akt4_jet_n_GridSub1]/F");
 outTree->Branch ("akt4_jet_e_GridSub1",    &akt4_jet_e_GridSub1,    "akt4_jet_e_GridSub1[akt4_jet_n_GridSub1]/F");
-
+*/
 outTree->Branch ("akt4_jet_n_GridSub2",    &akt4_jet_n_GridSub2,    "akt4_jet_n_GridSub2/I");
 outTree->Branch ("akt4_jet_pt_GridSub2",   &akt4_jet_pt_GridSub2,   "akt4_jet_pt_GridSub2[akt4_jet_n_GridSub2]/F");
 outTree->Branch ("akt4_jet_eta_GridSub2",  &akt4_jet_eta_GridSub2,  "akt4_jet_eta_GridSub2[akt4_jet_n_GridSub2]/F");
@@ -354,7 +354,7 @@ while (event) {
     part_n++;
   }
 
-
+ // 4MomSub (recommended Subtraction) : 
   float dphi;
   float deta;
   float dR;
@@ -368,38 +368,41 @@ while (event) {
   akt8_jet_n_4MomSub = akt8_jet_n;
   akt1_jet_n_4MomSub = akt1_jet_n;
 
-for (int alljets = 0; alljets < akt2_jet_n_4MomSub; alljets ++){
-  jet_tlv.SetPtEtaPhiE (akt2_jet_pt[alljets], akt2_jet_eta[alljets], akt2_jet_phi[alljets], akt2_jet_e[alljets]);
-  Sum_tlv.SetPtEtaPhiE(0,0,0,0);
+// 4MomSub for anti-kT R = 0.2
+// loop over each jet to do jet-level subtraction
+  for (int alljets = 0; alljets < akt2_jet_n_4MomSub; alljets ++){
+    jet_tlv.SetPtEtaPhiE (akt2_jet_pt[alljets], akt2_jet_eta[alljets], akt2_jet_phi[alljets], akt2_jet_e[alljets]);
+    Sum_tlv.SetPtEtaPhiE(0,0,0,0);
+// loop over each thermal momenta and check that it is within the jet
+    for (int thermal_m = 0; thermal_m < part_n; thermal_m++){
+      if (part_status[thermal_m] != 3) continue;
 
-  for (int thermal_m = 0; thermal_m < part_n; thermal_m++){
-    if (part_status[thermal_m] != 3) continue;
-
-    dphi = akt2_jet_phi[alljets]- part_phi[thermal_m];
-    if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
-    if (dphi < -TMath::Pi()) dphi += 2*TMath::Pi();
-    deta = akt2_jet_eta[alljets]-part_eta[thermal_m];
-    dR = sqrt(pow(deta,2) + pow(dphi,2));
-
-    if (dR > 0.2)  continue;
-    for (int allparticles = 0 ; allparticles < part_n; allparticles++){
-      if (part_status[allparticles] == 3 ) continue;
-
-
-      dphi = part_phi[thermal_m]-part_phi[allparticles];
+      dphi = akt2_jet_phi[alljets]- part_phi[thermal_m];
       if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
       if (dphi < -TMath::Pi()) dphi += 2*TMath::Pi();
-
-      deta = part_eta[allparticles]-part_eta[thermal_m];
+      deta = akt2_jet_eta[alljets]-part_eta[thermal_m];
       dR = sqrt(pow(deta,2) + pow(dphi,2));
 
-      if (dR > 1e-5) continue;
-      thermal_tlv.SetPtEtaPhiE (part_pt[thermal_m], part_eta[thermal_m], part_phi[thermal_m], part_e[thermal_m]);
-      Sum_tlv += thermal_tlv;
-    }
-  }
-    jet_tlv = jet_tlv - Sum_tlv;
+      if (dR > 0.2)  continue;
+// check that there is any final state particle next to that thermal momenta (dR < 1e-5)
+      for (int allparticles = 0 ; allparticles < part_n; allparticles++){
+        if (part_status[allparticles] == 3 ) continue;
 
+        dphi = part_phi[thermal_m]-part_phi[allparticles];
+        if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
+        if (dphi < -TMath::Pi()) dphi += 2*TMath::Pi();
+
+        deta = part_eta[allparticles]-part_eta[thermal_m];
+        dR = sqrt(pow(deta,2) + pow(dphi,2));
+
+        if (dR > 1e-5) continue;
+	// if there is final state particle next to that thermal momenta, then subtract the jets new 4-mom = old jet - thermal momenta
+        thermal_tlv.SetPtEtaPhiE (part_pt[thermal_m], part_eta[thermal_m], part_phi[thermal_m], part_e[thermal_m]);
+        Sum_tlv += thermal_tlv;
+	break;
+      }
+    }
+    jet_tlv = jet_tlv - Sum_tlv;
     akt2_jet_pt_4MomSub[alljets]  = jet_tlv.Pt  ();
     akt2_jet_eta_4MomSub[alljets] = jet_tlv.Eta ();
     akt2_jet_phi_4MomSub[alljets] = jet_tlv.Phi ();
@@ -407,7 +410,7 @@ for (int alljets = 0; alljets < akt2_jet_n_4MomSub; alljets ++){
   }
 
 
-
+// 4MomSub for anti-kT R = 0.3
   for (int alljets = 0; alljets < akt3_jet_n_4MomSub; alljets ++){
     jet_tlv.SetPtEtaPhiE (akt3_jet_pt[alljets], akt3_jet_eta[alljets], akt3_jet_phi[alljets], akt3_jet_e[alljets]);
     Sum_tlv.SetPtEtaPhiE(0,0,0,0);
@@ -425,7 +428,6 @@ for (int alljets = 0; alljets < akt2_jet_n_4MomSub; alljets ++){
       for (int allparticles = 0 ; allparticles < part_n; allparticles++){
         if (part_status[allparticles] == 3 ) continue;
 
-
         dphi = part_phi[thermal_m]-part_phi[allparticles];
         if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
         if (dphi < -TMath::Pi()) dphi += 2*TMath::Pi();
@@ -436,34 +438,34 @@ for (int alljets = 0; alljets < akt2_jet_n_4MomSub; alljets ++){
         if (dR > 1e-5) continue;
         thermal_tlv.SetPtEtaPhiE (part_pt[thermal_m], part_eta[thermal_m], part_phi[thermal_m], part_e[thermal_m]);
         Sum_tlv += thermal_tlv;
+	break;
       }
     }
       jet_tlv = jet_tlv - Sum_tlv;
-
       akt3_jet_pt_4MomSub[alljets]  = jet_tlv.Pt  ();
       akt3_jet_eta_4MomSub[alljets] = jet_tlv.Eta ();
       akt3_jet_phi_4MomSub[alljets] = jet_tlv.Phi ();
       akt3_jet_e_4MomSub[alljets]   = jet_tlv.E   ();
-    }
+  }
 
 
-    for (int alljets = 0; alljets < akt4_jet_n_4MomSub; alljets ++){
-      jet_tlv.SetPtEtaPhiE (akt4_jet_pt[alljets], akt4_jet_eta[alljets], akt4_jet_phi[alljets], akt4_jet_e[alljets]);
-      Sum_tlv.SetPtEtaPhiE(0,0,0,0);
+ // 4MomSub for anti-kT R = 0.4
+  for (int alljets = 0; alljets < akt4_jet_n_4MomSub; alljets ++){
+    jet_tlv.SetPtEtaPhiE (akt4_jet_pt[alljets], akt4_jet_eta[alljets], akt4_jet_phi[alljets], akt4_jet_e[alljets]);
+    Sum_tlv.SetPtEtaPhiE(0,0,0,0);
 
-      for (int thermal_m = 0; thermal_m < part_n; thermal_m++){
-        if (part_status[thermal_m] != 3) continue;
+    for (int thermal_m = 0; thermal_m < part_n; thermal_m++){
+      if (part_status[thermal_m] != 3) continue;
 
-        dphi = akt4_jet_phi[alljets]- part_phi[thermal_m];
-        if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
-        if (dphi < -TMath::Pi()) dphi += 2*TMath::Pi();
-        deta = akt4_jet_eta[alljets]-part_eta[thermal_m];
-        dR = sqrt(pow(deta,2) + pow(dphi,2));
+      dphi = akt4_jet_phi[alljets]- part_phi[thermal_m];
+      if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
+      if (dphi < -TMath::Pi()) dphi += 2*TMath::Pi();
+      deta = akt4_jet_eta[alljets]-part_eta[thermal_m];
+      dR = sqrt(pow(deta,2) + pow(dphi,2));
 
-        if (dR > 0.4)  continue;
-        for (int allparticles = 0 ; allparticles < part_n; allparticles++){
-          if (part_status[allparticles] == 3 ) continue;
-
+      if (dR > 0.4)  continue;
+      for (int allparticles = 0 ; allparticles < part_n; allparticles++){
+        if (part_status[allparticles] == 3 ) continue;
 
           dphi = part_phi[thermal_m]-part_phi[allparticles];
           if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
@@ -475,132 +477,129 @@ for (int alljets = 0; alljets < akt2_jet_n_4MomSub; alljets ++){
           if (dR > 1e-5) continue;
           thermal_tlv.SetPtEtaPhiE (part_pt[thermal_m], part_eta[thermal_m], part_phi[thermal_m], part_e[thermal_m]);
           Sum_tlv += thermal_tlv;
-        }
+	  break; 
       }
+    }
         jet_tlv = jet_tlv - Sum_tlv;
-
         akt4_jet_pt_4MomSub[alljets]  = jet_tlv.Pt  ();
         akt4_jet_eta_4MomSub[alljets] = jet_tlv.Eta ();
         akt4_jet_phi_4MomSub[alljets] = jet_tlv.Phi ();
         akt4_jet_e_4MomSub[alljets]   = jet_tlv.E   ();
       }
 
+// 4MomSub for anti-kT R = 0.6
+  for (int alljets = 0; alljets < akt6_jet_n_4MomSub; alljets ++){
+    jet_tlv.SetPtEtaPhiE (akt6_jet_pt[alljets], akt6_jet_eta[alljets], akt6_jet_phi[alljets], akt6_jet_e[alljets]);
+    Sum_tlv.SetPtEtaPhiE(0,0,0,0);
 
-      for (int alljets = 0; alljets < akt6_jet_n_4MomSub; alljets ++){
-        jet_tlv.SetPtEtaPhiE (akt6_jet_pt[alljets], akt6_jet_eta[alljets], akt6_jet_phi[alljets], akt6_jet_e[alljets]);
-        Sum_tlv.SetPtEtaPhiE(0,0,0,0);
+    for (int thermal_m = 0; thermal_m < part_n; thermal_m++){
+      if (part_status[thermal_m] != 3) continue;
 
-        for (int thermal_m = 0; thermal_m < part_n; thermal_m++){
-          if (part_status[thermal_m] != 3) continue;
+      dphi = akt6_jet_phi[alljets]- part_phi[thermal_m];
+      if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
+      if (dphi < -TMath::Pi()) dphi += 2*TMath::Pi();
+      deta = akt6_jet_eta[alljets]-part_eta[thermal_m];
+      dR = sqrt(pow(deta,2) + pow(dphi,2));
 
-          dphi = akt6_jet_phi[alljets]- part_phi[thermal_m];
-          if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
-          if (dphi < -TMath::Pi()) dphi += 2*TMath::Pi();
-          deta = akt6_jet_eta[alljets]-part_eta[thermal_m];
-          dR = sqrt(pow(deta,2) + pow(dphi,2));
+      if (dR > 0.6)  continue;
+      for (int allparticles = 0 ; allparticles < part_n; allparticles++){
+        if (part_status[allparticles] == 3 ) continue;
 
-          if (dR > 0.6)  continue;
-          for (int allparticles = 0 ; allparticles < part_n; allparticles++){
-            if (part_status[allparticles] == 3 ) continue;
+        dphi = part_phi[thermal_m]-part_phi[allparticles];
+        if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
+        if (dphi < -TMath::Pi()) dphi += 2*TMath::Pi();
 
+        deta = part_eta[allparticles]-part_eta[thermal_m];
+        dR = sqrt(pow(deta,2) + pow(dphi,2));
 
-            dphi = part_phi[thermal_m]-part_phi[allparticles];
-            if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
-            if (dphi < -TMath::Pi()) dphi += 2*TMath::Pi();
+        if (dR > 1e-5) continue;
+        thermal_tlv.SetPtEtaPhiE (part_pt[thermal_m], part_eta[thermal_m], part_phi[thermal_m], part_e[thermal_m]);
+        Sum_tlv += thermal_tlv;
+	break;
+      }
+    }
+      jet_tlv = jet_tlv - Sum_tlv;
+      akt6_jet_pt_4MomSub[alljets]  = jet_tlv.Pt  ();
+      akt6_jet_eta_4MomSub[alljets] = jet_tlv.Eta ();
+      akt6_jet_phi_4MomSub[alljets] = jet_tlv.Phi ();
+      akt6_jet_e_4MomSub[alljets]   = jet_tlv.E   ();
+  }
 
-            deta = part_eta[allparticles]-part_eta[thermal_m];
-            dR = sqrt(pow(deta,2) + pow(dphi,2));
+// 4MomSub for anti-kT R = 0.6
+  for (int alljets = 0; alljets < akt8_jet_n_4MomSub; alljets ++){
+    jet_tlv.SetPtEtaPhiE (akt8_jet_pt[alljets], akt8_jet_eta[alljets], akt8_jet_phi[alljets], akt8_jet_e[alljets]);
+    Sum_tlv.SetPtEtaPhiE(0,0,0,0);
 
-            if (dR > 1e-5) continue;
-            thermal_tlv.SetPtEtaPhiE (part_pt[thermal_m], part_eta[thermal_m], part_phi[thermal_m], part_e[thermal_m]);
-            Sum_tlv += thermal_tlv;
-          }
-        }
+    for (int thermal_m = 0; thermal_m < part_n; thermal_m++){
+      if (part_status[thermal_m] != 3) continue;
+
+      dphi = akt8_jet_phi[alljets]- part_phi[thermal_m];
+      if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
+      if (dphi < -TMath::Pi()) dphi += 2*TMath::Pi();
+      deta = akt8_jet_eta[alljets]-part_eta[thermal_m];
+      dR = sqrt(pow(deta,2) + pow(dphi,2));
+
+      if (dR > 0.8)  continue;
+      for (int allparticles = 0 ; allparticles < part_n; allparticles++){
+        if (part_status[allparticles] == 3 ) continue;
+
+        dphi = part_phi[thermal_m]-part_phi[allparticles];
+        if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
+        if (dphi < -TMath::Pi()) dphi += 2*TMath::Pi();
+
+        deta = part_eta[allparticles]-part_eta[thermal_m];
+        dR = sqrt(pow(deta,2) + pow(dphi,2));
+
+        if (dR > 1e-5) continue;
+        thermal_tlv.SetPtEtaPhiE (part_pt[thermal_m], part_eta[thermal_m], part_phi[thermal_m], part_e[thermal_m]);
+        Sum_tlv += thermal_tlv;
+        break;
+      }
+    }
           jet_tlv = jet_tlv - Sum_tlv;
+          akt8_jet_pt_4MomSub[alljets]  = jet_tlv.Pt  ();
+          akt8_jet_eta_4MomSub[alljets] = jet_tlv.Eta ();
+          akt8_jet_phi_4MomSub[alljets] = jet_tlv.Phi ();
+          akt8_jet_e_4MomSub[alljets]   = jet_tlv.E   ();
+  }
 
-          akt6_jet_pt_4MomSub[alljets]  = jet_tlv.Pt  ();
-          akt6_jet_eta_4MomSub[alljets] = jet_tlv.Eta ();
-          akt6_jet_phi_4MomSub[alljets] = jet_tlv.Phi ();
-          akt6_jet_e_4MomSub[alljets]   = jet_tlv.E   ();
-        }
+// 4MomSub for anti-kT R = 1
+  for (int alljets = 0; alljets < akt1_jet_n_4MomSub; alljets ++){
+   jet_tlv.SetPtEtaPhiE (akt1_jet_pt[alljets], akt1_jet_eta[alljets], akt1_jet_phi[alljets], akt1_jet_e[alljets]);
+   Sum_tlv.SetPtEtaPhiE(0,0,0,0);
 
+   for (int thermal_m = 0; thermal_m < part_n; thermal_m++){
+     if (part_status[thermal_m] != 3) continue;
 
-        for (int alljets = 0; alljets < akt8_jet_n_4MomSub; alljets ++){
-          jet_tlv.SetPtEtaPhiE (akt8_jet_pt[alljets], akt8_jet_eta[alljets], akt8_jet_phi[alljets], akt8_jet_e[alljets]);
-          Sum_tlv.SetPtEtaPhiE(0,0,0,0);
+     dphi = akt1_jet_phi[alljets]- part_phi[thermal_m];
+     if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
+     if (dphi < -TMath::Pi()) dphi += 2*TMath::Pi();
+     deta = akt1_jet_eta[alljets]-part_eta[thermal_m];
+     dR = sqrt(pow(deta,2) + pow(dphi,2));
 
-          for (int thermal_m = 0; thermal_m < part_n; thermal_m++){
-            if (part_status[thermal_m] != 3) continue;
+     if (dR > 1)  continue;
+     for (int allparticles = 0 ; allparticles < part_n; allparticles++){
+       if (part_status[allparticles] == 3 ) continue;
 
-            dphi = akt8_jet_phi[alljets]- part_phi[thermal_m];
-            if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
-            if (dphi < -TMath::Pi()) dphi += 2*TMath::Pi();
-            deta = akt8_jet_eta[alljets]-part_eta[thermal_m];
-            dR = sqrt(pow(deta,2) + pow(dphi,2));
+       dphi = part_phi[thermal_m]-part_phi[allparticles];
+       if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
+       if (dphi < -TMath::Pi()) dphi += 2*TMath::Pi();
 
-            if (dR > 0.8)  continue;
-            for (int allparticles = 0 ; allparticles < part_n; allparticles++){
-              if (part_status[allparticles] == 3 ) continue;
+         deta = part_eta[allparticles]-part_eta[thermal_m];
+         dR = sqrt(pow(deta,2) + pow(dphi,2));
 
-
-              dphi = part_phi[thermal_m]-part_phi[allparticles];
-              if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
-              if (dphi < -TMath::Pi()) dphi += 2*TMath::Pi();
-
-              deta = part_eta[allparticles]-part_eta[thermal_m];
-              dR = sqrt(pow(deta,2) + pow(dphi,2));
-
-              if (dR > 1e-5) continue;
-              thermal_tlv.SetPtEtaPhiE (part_pt[thermal_m], part_eta[thermal_m], part_phi[thermal_m], part_e[thermal_m]);
-              Sum_tlv += thermal_tlv;
-            }
-          }
-            jet_tlv = jet_tlv - Sum_tlv;
-
-            akt8_jet_pt_4MomSub[alljets]  = jet_tlv.Pt  ();
-            akt8_jet_eta_4MomSub[alljets] = jet_tlv.Eta ();
-            akt8_jet_phi_4MomSub[alljets] = jet_tlv.Phi ();
-            akt8_jet_e_4MomSub[alljets]   = jet_tlv.E   ();
-          }
-
-
-          for (int alljets = 0; alljets < akt1_jet_n_4MomSub; alljets ++){
-            jet_tlv.SetPtEtaPhiE (akt1_jet_pt[alljets], akt1_jet_eta[alljets], akt1_jet_phi[alljets], akt1_jet_e[alljets]);
-            Sum_tlv.SetPtEtaPhiE(0,0,0,0);
-
-            for (int thermal_m = 0; thermal_m < part_n; thermal_m++){
-              if (part_status[thermal_m] != 3) continue;
-
-              dphi = akt1_jet_phi[alljets]- part_phi[thermal_m];
-              if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
-              if (dphi < -TMath::Pi()) dphi += 2*TMath::Pi();
-              deta = akt1_jet_eta[alljets]-part_eta[thermal_m];
-              dR = sqrt(pow(deta,2) + pow(dphi,2));
-
-              if (dR > 1)  continue;
-              for (int allparticles = 0 ; allparticles < part_n; allparticles++){
-                if (part_status[allparticles] == 3 ) continue;
-
-
-                dphi = part_phi[thermal_m]-part_phi[allparticles];
-                if (dphi > TMath::Pi())  dphi -= 2*TMath::Pi();
-                if (dphi < -TMath::Pi()) dphi += 2*TMath::Pi();
-
-                deta = part_eta[allparticles]-part_eta[thermal_m];
-                dR = sqrt(pow(deta,2) + pow(dphi,2));
-
-                if (dR > 1e-5) continue;
-                thermal_tlv.SetPtEtaPhiE (part_pt[thermal_m], part_eta[thermal_m], part_phi[thermal_m], part_e[thermal_m]);
-                Sum_tlv += thermal_tlv;
-              }
-            }
-              jet_tlv = jet_tlv - Sum_tlv;
-
-              akt1_jet_pt_4MomSub[alljets]  = jet_tlv.Pt  ();
-              akt1_jet_eta_4MomSub[alljets] = jet_tlv.Eta ();
-              akt1_jet_phi_4MomSub[alljets] = jet_tlv.Phi ();
-              akt1_jet_e_4MomSub[alljets]   = jet_tlv.E   ();
-            }
+         if (dR > 1e-5) continue;
+         thermal_tlv.SetPtEtaPhiE (part_pt[thermal_m], part_eta[thermal_m], part_phi[thermal_m], part_e[thermal_m]);
+         Sum_tlv += thermal_tlv;
+         break;
+      }
+    }
+       jet_tlv = jet_tlv - Sum_tlv;
+       akt1_jet_pt_4MomSub[alljets]  = jet_tlv.Pt  ();
+       akt1_jet_eta_4MomSub[alljets] = jet_tlv.Eta ();
+       akt1_jet_phi_4MomSub[alljets] = jet_tlv.Phi ();
+       akt1_jet_e_4MomSub[alljets]   = jet_tlv.E   ();
+  }
 
 
 
@@ -611,82 +610,89 @@ for (int alljets = 0; alljets < akt2_jet_n_4MomSub; alljets ++){
 
 
 
+// GridSub2 :
+  float phi_min = -TMath::Pi() - 2*TMath::Pi()/40;
+  float phi_max = -TMath::Pi();
 
-      float phi_min = -TMath::Pi() - 2*TMath::Pi()/40;
-      float phi_max = -TMath::Pi();
+  TLorentzVector grid2_tlv[40][40];
+  TLorentzVector grid2_thermal_tlv[40][40];
+  TLorentzVector grid2_Sum_tlv;
+  phi_min = -TMath::Pi() - 2*TMath::Pi()/40;
+  phi_max = -TMath::Pi();
+  
+// divide eta-phi plane into 40x40 grid and sum up 4-mom for final state particles in each cell
+  for (int allphi = 0; allphi < 40; allphi ++){
+    phi_min += 2*TMath::Pi()/40 ;
+    phi_max += 2*TMath::Pi()/40 ;
+    float eta_min = -21*0.2;
+    float eta_max = -4 ;
+    for (int alleta = 0; alleta < 40; alleta ++){
+      eta_min += 0.2;
+      eta_max += 0.2;
+      for (int allparticles = 0 ; allparticles < part_n; allparticles++){
+        if (part_phi[allparticles] > phi_max  || part_phi[allparticles] < phi_min ||  part_eta[allparticles] > eta_max || part_eta[allparticles] < eta_min || part_status[allparticles] == 3 )continue;
+        grid2_Sum_tlv.SetPtEtaPhiE (part_pt[allparticles], part_eta[allparticles], part_phi[allparticles], part_e[allparticles]);
+        grid2_tlv[allphi][alleta] +=grid2_Sum_tlv; 
+      }
+    }
+  }
 
-
-      TLorentzVector grid2_tlv[40][40];
-      TLorentzVector grid2_thermal_tlv[40][40];
-      TLorentzVector grid2_Sum_tlv;
-      phi_min = -TMath::Pi() - 2*TMath::Pi()/40;
-      phi_max = -TMath::Pi();
-
-
-for (int allphi = 0; allphi < 40; allphi ++){
-  phi_min += 2*TMath::Pi()/40 ;
-  phi_max += 2*TMath::Pi()/40 ;
-  float eta_min = -21*0.2;
-  float eta_max = -4 ;
-  for (int alleta = 0; alleta < 40; alleta ++){
-    eta_min += 0.2;
-    eta_max += 0.2;
-    for (int allparticles = 0 ; allparticles < part_n; allparticles++){
-      if (part_phi[allparticles] > phi_max  || part_phi[allparticles] < phi_min ||  part_eta[allparticles] > eta_max || part_eta[allparticles] < eta_min || part_status[allparticles] == 3 )continue;
-      grid2_Sum_tlv.SetPtEtaPhiE (part_pt[allparticles], part_eta[allparticles], part_phi[allparticles], part_e[allparticles]);
-      grid2_tlv[allphi][alleta] +=grid2_Sum_tlv;  }}}
-
-
+// divide eta-phi plane into 40x40 grid and sum up 4-mom for thermal momenta in each cell
   phi_min = -TMath::Pi() - 2*TMath::Pi()/40;
   phi_max = -TMath::Pi();
 
-for (int allphi = 0; allphi < 40; allphi ++){
-  phi_min += 2*TMath::Pi()/40 ;
-  phi_max += 2*TMath::Pi()/40 ;
-  float eta_min = -21*0.2;
-  float eta_max = -4 ;
-  for (int alleta = 0; alleta < 40; alleta ++){
-    eta_min += 0.2;
-    eta_max += 0.2;
-    for (int allparticles = 0 ; allparticles < part_n; allparticles++){
-    if (part_phi[allparticles] > phi_max  || part_phi[allparticles] < phi_min ||  part_eta[allparticles] > eta_max || part_eta[allparticles] < eta_min || part_status[allparticles] != 3 )continue;
-    grid2_Sum_tlv.SetPtEtaPhiE (part_pt[allparticles], part_eta[allparticles], part_phi[allparticles], part_e[allparticles]);
-    grid2_thermal_tlv[allphi][alleta] +=grid2_Sum_tlv;  }}}
+  for (int allphi = 0; allphi < 40; allphi ++){
+    phi_min += 2*TMath::Pi()/40 ;
+    phi_max += 2*TMath::Pi()/40 ;
+    float eta_min = -21*0.2;
+    float eta_max = -4 ;
+    for (int alleta = 0; alleta < 40; alleta ++){
+      eta_min += 0.2;
+      eta_max += 0.2;
+      for (int allparticles = 0 ; allparticles < part_n; allparticles++){
+        if (part_phi[allparticles] > phi_max  || part_phi[allparticles] < phi_min ||  part_eta[allparticles] > eta_max || part_eta[allparticles] < eta_min || part_status[allparticles] != 3 )continue;
+        grid2_Sum_tlv.SetPtEtaPhiE (part_pt[allparticles], part_eta[allparticles], part_phi[allparticles], part_e[allparticles]);
+        grid2_thermal_tlv[allphi][alleta] +=grid2_Sum_tlv; 
+      }
+    }
+  }
 
 
-
+// for each cell:
+// if pT Sum(final state particles) < Sum(thermal momenta), then set that cell's 4mom to (0,0,0,0)
+// if pT Sum(final state particles) > Sum(thermal momenta), then set that cell's 4mom to : 4-mom(Sum(final state particles)) - 4-mom(Sum(thermal momenta))
   for (int allphi = 0; allphi< 40; allphi++){
     for(int alleta = 0; alleta < 40 ; alleta++){
 
       if (grid2_tlv[allphi][alleta].Pt() < grid2_thermal_tlv[allphi][alleta].Pt() ) grid2_tlv[allphi][alleta].SetPtEtaPhiE(0,0,0,0);
-      else grid2_tlv[allphi][alleta] -= grid2_thermal_tlv[allphi][alleta]; }}
+      else grid2_tlv[allphi][alleta] -= grid2_thermal_tlv[allphi][alleta]; 
+    }
+  }
 
-
+// cluster new jets using cells as particles
       vector <fastjet::PseudoJet> grid2;
 
+  for (int allphi = 0; allphi< 40; allphi++){
+    for(int alleta = 0; alleta < 40 ; alleta++){
+      if (fabs (grid2_tlv[allphi][alleta].Eta ()) > etaMax || grid2_tlv[allphi][alleta].Pt () == 0 ) continue;
 
-      for (int allphi = 0; allphi< 40; allphi++){
-        for(int alleta = 0; alleta < 40 ; alleta++){
-          if (fabs (grid2_tlv[allphi][alleta].Eta ()) > etaMax || grid2_tlv[allphi][alleta].Pt () == 0 )
-            continue;
-        grid2.push_back (fastjet::PseudoJet (grid2_tlv[allphi][alleta].Px (), grid2_tlv[allphi][alleta].Py (), grid2_tlv[allphi][alleta].Pz (), grid2_tlv[allphi][alleta].E ()));
-        }
-      }
+      grid2.push_back (fastjet::PseudoJet (grid2_tlv[allphi][alleta].Px (), grid2_tlv[allphi][alleta].Py (), grid2_tlv[allphi][alleta].Pz (), grid2_tlv[allphi][alleta].E ()));
+    }
+  }
 
-      fastjet::ClusterSequence clusterSeqAkt4_GridSub2 (grid2, antiKt4_GridSub2);
-      vector<fastjet::PseudoJet> sortedAkt4_GridSub2_Jets = fastjet::sorted_by_pt (clusterSeqAkt4_GridSub2.inclusive_jets ());
+  fastjet::ClusterSequence clusterSeqAkt4_GridSub2 (grid2, antiKt4_GridSub2);
+  vector<fastjet::PseudoJet> sortedAkt4_GridSub2_Jets = fastjet::sorted_by_pt (clusterSeqAkt4_GridSub2.inclusive_jets ());
 
-      akt4_jet_n_GridSub2 = 0;
-      for (fastjet::PseudoJet jet : sortedAkt4_GridSub2_Jets) {
-        if (jet.perp () < minJetPt || fabs (jet.pseudorapidity ()) > etaMax || akt4_jet_n_GridSub2 >= 100)
-          continue;
+  akt4_jet_n_GridSub2 = 0;
+  for (fastjet::PseudoJet jet : sortedAkt4_GridSub2_Jets) {
+    if (jet.perp () < minJetPt || fabs (jet.pseudorapidity ()) > etaMax || akt4_jet_n_GridSub2 >= 100)   continue;
 
-        akt4_jet_pt_GridSub2[akt4_jet_n_GridSub2] = jet.perp ();
-        akt4_jet_eta_GridSub2[akt4_jet_n_GridSub2] = jet.pseudorapidity ();
-        akt4_jet_phi_GridSub2[akt4_jet_n_GridSub2] = jet.phi ();
-        akt4_jet_e_GridSub2[akt4_jet_n_GridSub2] = jet.e ();
-        akt4_jet_n_GridSub2++;
-      }
+      akt4_jet_pt_GridSub2[akt4_jet_n_GridSub2]  = jet.perp ();
+      akt4_jet_eta_GridSub2[akt4_jet_n_GridSub2] = jet.pseudorapidity ();
+      akt4_jet_phi_GridSub2[akt4_jet_n_GridSub2] = jet.phi ();
+      akt4_jet_e_GridSub2[akt4_jet_n_GridSub2]   = jet.e ();
+      akt4_jet_n_GridSub2++;
+  }
 
 
 
