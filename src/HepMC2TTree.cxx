@@ -369,11 +369,11 @@ while (event) {
   akt1_jet_n_4MomSub = akt1_jet_n;
 
 // 4MomSub for anti-kT R = 0.2
-// loop over each jet to do jet-level subtraction
+// loop over each jet to perform jet-level subtraction : 
   for (int alljets = 0; alljets < akt2_jet_n_4MomSub; alljets ++){
     jet_tlv.SetPtEtaPhiE (akt2_jet_pt[alljets], akt2_jet_eta[alljets], akt2_jet_phi[alljets], akt2_jet_e[alljets]);
     Sum_tlv.SetPtEtaPhiE(0,0,0,0);
-// loop over each thermal momenta and check that it is within the jet
+// loop over each thermal momentum and check if it's within the jet :
     for (int thermal_m = 0; thermal_m < part_n; thermal_m++){
       if (part_status[thermal_m] != 3) continue;
 
@@ -384,7 +384,7 @@ while (event) {
       dR = sqrt(pow(deta,2) + pow(dphi,2));
 
       if (dR > 0.2)  continue;
-// check that there is any final state particle next to that thermal momenta (dR < 1e-5)
+// check if there is any final state particle next to that thermal momentum (dR < 1e-5) (if not, we ignore that thermal momentum for this jet) :
       for (int allparticles = 0 ; allparticles < part_n; allparticles++){
         if (part_status[allparticles] == 3 ) continue;
 
@@ -396,12 +396,13 @@ while (event) {
         dR = sqrt(pow(deta,2) + pow(dphi,2));
 
         if (dR > 1e-5) continue;
-	// if there is final state particle next to that thermal momenta, then subtract the jets new 4-mom = old jet - thermal momenta
+	// if there is any final state particle next to that thermal momenta, then add it to the sum of all thermal momenta that satisfy previuos conditions 
         thermal_tlv.SetPtEtaPhiE (part_pt[thermal_m], part_eta[thermal_m], part_phi[thermal_m], part_e[thermal_m]);
         Sum_tlv += thermal_tlv;
 	break;
       }
     }
+// now perform subtraction (new jet = old jet - Sum(thermal momenta)) 
     jet_tlv = jet_tlv - Sum_tlv;
     akt2_jet_pt_4MomSub[alljets]  = jet_tlv.Pt  ();
     akt2_jet_eta_4MomSub[alljets] = jet_tlv.Eta ();
@@ -674,7 +675,7 @@ while (event) {
 
   for (int allphi = 0; allphi< 40; allphi++){
     for(int alleta = 0; alleta < 40 ; alleta++){
-      if (fabs (grid2_tlv[allphi][alleta].Eta ()) > etaMax || grid2_tlv[allphi][alleta].Pt () == 0 ) continue;
+      if (fabs (grid2_tlv[allphi][alleta].Eta ()) > etaMax || grid2_tlv[allphi][alleta].Pt () == 0 ) continue; 
 
       grid2.push_back (fastjet::PseudoJet (grid2_tlv[allphi][alleta].Px (), grid2_tlv[allphi][alleta].Py (), grid2_tlv[allphi][alleta].Pz (), grid2_tlv[allphi][alleta].E ()));
     }
