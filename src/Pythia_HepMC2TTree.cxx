@@ -34,7 +34,10 @@ int main (int argc, char** argv) {
   cout << "outFileName = " << outFileName << endl;
 
 
-  HepMC::IO_GenEvent* inFile = new HepMC::IO_GenEvent (inFileName, std::ios::in);
+  //HepMC::IO_GenEvent* inFile = new HepMC::IO_GenEvent (inFileName, std::ios::in);
+
+  TFile* inFile = new TFile (inFileName, "read");
+  TTree* inTree = (TTree*) inFile->Get("event_tree");
 
   TFile* outFile = new TFile (outFileName, "recreate");
   TTree* outTree = new TTree ("tree", "JEWELs don't grow on trees :(");
@@ -44,9 +47,12 @@ float part_pt[10000];
 float part_eta[10000];
 float part_phi[10000];
 float part_e[10000];
-int part_pdgid[10000];
-int part_barcode[10000];
-int part_charge[10000];
+float part_px[10000];
+float part_py[10000];
+float part_pz[10000];
+//int part_pdgid[10000];
+//int part_barcode[10000];
+//int part_charge[10000];
 int part_status[10000];
 
 int akt2_jet_n = 0;
@@ -136,16 +142,22 @@ float akt4_jet_zg_GridSub2[100];
 float akt4_jet_thetag_GridSub2[100];
 float akt4_jet_mu_GridSub2[100];
 
+inTree->SetBranchAddress ("particle_n",        &part_n      );
+inTree->SetBranchAddress ("particle_pt",       part_pt     );
+inTree->SetBranchAddress ("particle_eta",      part_eta    );
+inTree->SetBranchAddress ("particle_phi",      part_phi    );
+inTree->SetBranchAddress ("particle_e",        part_e      );
+//inTree->SetBranchAddress ("particle_pid",    &part_pdgid  );
+inTree->SetBranchAddress ("particle_px",       part_px     );
+inTree->SetBranchAddress ("particle_py",       part_py     );
+inTree->SetBranchAddress ("particle_pz",       part_pz     );
 
 outTree->Branch ("part_n",        &part_n,        "part_n/I");
 outTree->Branch ("part_pt",       &part_pt,       "part_pt[part_n]/F");
 outTree->Branch ("part_eta",      &part_eta,      "part_eta[part_n]/F");
 outTree->Branch ("part_phi",      &part_phi,      "part_phi[part_n]/F");
 outTree->Branch ("part_e",        &part_e,        "part_e[part_n]/F");
-outTree->Branch ("part_pdgid",    &part_pdgid,    "part_pdgid[part_n]/I");
-outTree->Branch ("part_barcode",  part_barcode,   "part_barcode[part_n]/I");
-outTree->Branch ("part_charge",   &part_charge,   "part_charge[part_n]/I");
-outTree->Branch ("part_status",   &part_status,   "part_status[part_n]/I");
+//outTree->Branch ("part_pdgid",    &part_pdgid,    "part_pdgid[part_n]/I");
 
 outTree->Branch ("akt2_jet_n",    &akt2_jet_n,    "akt2_jet_n/I");
 outTree->Branch ("akt2_jet_pt",   &akt2_jet_pt,   "akt2_jet_pt[akt2_jet_n]/F");
@@ -253,14 +265,24 @@ fastjet::JetDefinition antiKt1 (fastjet::antikt_algorithm, 1);
 
 fastjet::JetDefinition antiKt4_GridSub1 (fastjet::antikt_algorithm, 0.4);
 fastjet::JetDefinition antiKt4_GridSub2 (fastjet::antikt_algorithm, 0.4);
-TDatabasePDG* pdgData = new TDatabasePDG ();
+//TDatabasePDG* pdgData = new TDatabasePDG ();
 
 int iEvt = 0;
-HepMC::GenEvent* event = inFile->read_next_event ();
-while (event) {
+//HepMC::GenEvent* event = inFile->read_next_event ();
 
+while (iEvt < 10000) {
+  inTree->GetEntry(iEvt);
   vector <fastjet::PseudoJet> particles;
 
+  for ( int part_iterator = 0; part_iterator != part_n; part_iterator++) {
+
+    //HepMC::FourVector mom = part->momentum ();
+    if (fabs (part_eta[part_iterator] ) > etaMax)
+      continue;
+
+    particles.push_back (fastjet::PseudoJet (part_px[part_iterator], part_py[part_iterator], part_pz[part_iterator], part_e[part_iterator]));
+  }
+/*
   for (HepMC::GenEvent::particle_iterator part_iterator = event->particles_begin (); part_iterator != event->particles_end (); part_iterator++) {
     HepMC::GenParticle* part = *(part_iterator);
 
@@ -273,6 +295,7 @@ while (event) {
 
     particles.push_back (fastjet::PseudoJet (mom.px (), mom.py (), mom.pz (), mom.e ()));
   }
+*/
 
   fastjet::ClusterSequence clusterSeqAkt2 (particles, antiKt2);
   vector<fastjet::PseudoJet> sortedAkt2Jets = fastjet::sorted_by_pt (clusterSeqAkt2.inclusive_jets ());
@@ -289,6 +312,9 @@ while (event) {
 
   akt2_jet_n = 0;
   for (fastjet::PseudoJet jet : sortedAkt2Jets) {
+    //cout << "jet perp = " << jet.perp () << endl;
+    //cout << "jet eta  = " << jet.pseudorapidity () << endl;
+    //cout << "jet n = " << akt2_jet_n << endl;
     if (jet.perp () < minJetPt || fabs (jet.pseudorapidity ()) > etaMax || akt2_jet_n >= 100)
       continue;
 
@@ -354,6 +380,8 @@ while (event) {
     akt1_jet_n++;
   }
 
+
+/*
   part_n = 0;
   for (HepMC::GenEvent::particle_iterator part_iterator = event->particles_begin (); part_iterator != event->particles_end (); part_iterator++) {
     HepMC::GenParticle* part = *(part_iterator);
@@ -373,7 +401,7 @@ while (event) {
     part_status[part_n]  = part->status ();
     part_n++;
   }
-
+*/
  // 4MomSub (recommended Subtraction) : 
   float dphi;
   float deta;
@@ -715,7 +743,7 @@ while (event) {
       akt4_jet_n_GridSub2++;
   }
 
-
+/*
 for (int ijet = 0; ijet < akt4_jet_n_GridSub2; ijet++){
   fastjet::PseudoJet sd_4_GridSub2 = sd(sortedAkt4_GridSub2_Jets[akt4_jet_n_GridSub2]);
   assert(sd_4_GridSub2 !=0);
@@ -724,17 +752,17 @@ for (int ijet = 0; ijet < akt4_jet_n_GridSub2; ijet++){
   akt4_jet_thetag_GridSub2[akt4_jet_n_GridSub2] = sd_4_GridSub2.structure_of<fastjet::contrib::SoftDrop>().thetag();
   akt4_jet_mu_GridSub2[akt4_jet_n_GridSub2]     = sd_4_GridSub2.structure_of<fastjet::contrib::SoftDrop>().mu();
 }
-
+*/
+//if (iEvt == 1803) cout << akt4_jet_n<< endl;
 for (int ijet = 0; ijet < akt4_jet_n; ijet++){
-  fastjet::PseudoJet sd_4 = sd(sortedAkt4Jets[akt4_jet_n]);
+  fastjet::PseudoJet sd_4 = sd(sortedAkt4Jets[ijet]);
   assert(sd_4 !=0);
-
   akt4_jet_zg[akt4_jet_n]     = sd_4.structure_of<fastjet::contrib::SoftDrop>().zg();
   akt4_jet_thetag[akt4_jet_n] = sd_4.structure_of<fastjet::contrib::SoftDrop>().thetag();
   akt4_jet_mu[akt4_jet_n]     = sd_4.structure_of<fastjet::contrib::SoftDrop>().mu();
 }
-
-
+//cout<<__LINE__<<endl;
+//cout<<iEvt<<endl;
 
 
 
@@ -749,7 +777,7 @@ for (int ijet = 0; ijet < akt4_jet_n; ijet++){
 
   outTree->Fill ();
 
-  event = inFile->read_next_event ();
+//  event = inFile->read_next_event ();
   iEvt++;
 }
 cout << "Events processed: " << iEvt << endl;

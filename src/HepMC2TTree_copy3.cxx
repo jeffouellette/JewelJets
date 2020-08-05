@@ -59,16 +59,11 @@ float akt3_jet_pt[100];
 float akt3_jet_eta[100];
 float akt3_jet_phi[100];
 float akt3_jet_e[100];
-
 int akt4_jet_n = 0;
 float akt4_jet_pt[100];
 float akt4_jet_eta[100];
 float akt4_jet_phi[100];
 float akt4_jet_e[100];
-float akt4_jet_zg[100];
-float akt4_jet_thetag[100];
-float akt4_jet_mu[100];
-
 int akt6_jet_n = 0;
 float akt6_jet_pt[100];
 float akt6_jet_eta[100];
@@ -90,36 +85,54 @@ float akt2_jet_pt_4MomSub[100];
 float akt2_jet_eta_4MomSub[100];
 float akt2_jet_phi_4MomSub[100];
 float akt2_jet_e_4MomSub[100];
+float akt2_jet_zg_4MomSub[100];
+float akt2_jet_thetag_4MomSub[100];
+float akt2_jet_mu_4MomSub[100];
 
 int akt3_jet_n_4MomSub = 0;
 float akt3_jet_pt_4MomSub[100];
 float akt3_jet_eta_4MomSub[100];
 float akt3_jet_phi_4MomSub[100];
 float akt3_jet_e_4MomSub[100];
+float akt3_jet_zg_4MomSub[100];
+float akt3_jet_thetag_4MomSub[100];
+float akt3_jet_mu_4MomSub[100];
 
 int akt4_jet_n_4MomSub = 0;
 float akt4_jet_pt_4MomSub[100];
 float akt4_jet_eta_4MomSub[100];
 float akt4_jet_phi_4MomSub[100];
 float akt4_jet_e_4MomSub[100];
+float akt4_jet_zg_4MomSub[100];
+float akt4_jet_thetag_4MomSub[100];
+float akt4_jet_mu_4MomSub[100];
 
 int akt6_jet_n_4MomSub = 0;
 float akt6_jet_pt_4MomSub[100];
 float akt6_jet_eta_4MomSub[100];
 float akt6_jet_phi_4MomSub[100];
 float akt6_jet_e_4MomSub[100];
+float akt6_jet_zg_4MomSub[100];
+float akt6_jet_thetag_4MomSub[100];
+float akt6_jet_mu_4MomSub[100];
 
 int akt8_jet_n_4MomSub = 0;
 float akt8_jet_pt_4MomSub[100];
 float akt8_jet_eta_4MomSub[100];
 float akt8_jet_phi_4MomSub[100];
 float akt8_jet_e_4MomSub[100];
+float akt8_jet_zg_4MomSub[100];
+float akt8_jet_thetag_4MomSub[100];
+float akt8_jet_mu_4MomSub[100];
 
 int akt1_jet_n_4MomSub = 0;
 float akt1_jet_pt_4MomSub[100];
 float akt1_jet_eta_4MomSub[100];
 float akt1_jet_phi_4MomSub[100];
 float akt1_jet_e_4MomSub[100];
+float akt1_jet_zg_4MomSub[100];
+float akt1_jet_thetag_4MomSub[100];
+float akt1_jet_mu_4MomSub[100];
 /*
 int akt4_jet_n_GridSub1 = 0;
 float akt4_jet_pt_GridSub1[100];
@@ -132,10 +145,6 @@ float akt4_jet_pt_GridSub2[100];
 float akt4_jet_eta_GridSub2[100];
 float akt4_jet_phi_GridSub2[100];
 float akt4_jet_e_GridSub2[100];
-float akt4_jet_zg_GridSub2[100];
-float akt4_jet_thetag_GridSub2[100];
-float akt4_jet_mu_GridSub2[100];
-
 
 outTree->Branch ("part_n",        &part_n,        "part_n/I");
 outTree->Branch ("part_pt",       &part_pt,       "part_pt[part_n]/F");
@@ -164,9 +173,6 @@ outTree->Branch ("akt4_jet_pt",   &akt4_jet_pt,   "akt4_jet_pt[akt4_jet_n]/F");
 outTree->Branch ("akt4_jet_eta",  &akt4_jet_eta,  "akt4_jet_eta[akt4_jet_n]/F");
 outTree->Branch ("akt4_jet_phi",  &akt4_jet_phi,  "akt4_jet_phi[akt4_jet_n]/F");
 outTree->Branch ("akt4_jet_e",    &akt4_jet_e,    "akt4_jet_e[akt4_jet_n]/F");
-outTree->Branch ("akt4_jet_zg",      &akt4_jet_zg,      "akt4_jet_zg[akt4_jet_n]/F");
-outTree->Branch ("akt4_jet_thetag",  &akt4_jet_thetag,  "akt4_jet_thetag[akt4_jet_n]/F");
-outTree->Branch ("akt4_jet_mu",      &akt4_jet_mu,      "akt4_jet_mu[akt4_jet_n]/F");
 
 outTree->Branch ("akt6_jet_n",    &akt6_jet_n,    "akt6_jet_n/I");
 outTree->Branch ("akt6_jet_pt",   &akt6_jet_pt,   "akt6_jet_pt[akt6_jet_n]/F");
@@ -191,36 +197,54 @@ outTree->Branch ("akt2_jet_pt_4MomSub",      &akt2_jet_pt_4MomSub,      "akt2_je
 outTree->Branch ("akt2_jet_eta_4MomSub",     &akt2_jet_eta_4MomSub,     "akt2_jet_eta_4MomSub[akt2_jet_n_4MomSub]/F");
 outTree->Branch ("akt2_jet_phi_4MomSub",     &akt2_jet_phi_4MomSub,     "akt2_jet_phi_4MomSub[akt2_jet_n_4MomSub]/F");
 outTree->Branch ("akt2_jet_e_4MomSub",       &akt2_jet_e_4MomSub,       "akt2_jet_e_4MomSub[akt2_jet_n_4MomSub]/F");
+outTree->Branch ("akt2_jet_zg_4MomSub",      &akt2_jet_zg_4MomSub,      "akt2_jet_zg_4MomSub[akt2_jet_n_4MomSub]/F");
+outTree->Branch ("akt2_jet_thetag_4MomSub",  &akt2_jet_thetag_4MomSub,  "akt2_jet_thetag_4MomSub[akt2_jet_n_4MomSub]/F");
+outTree->Branch ("akt2_jet_mu_4MomSub",      &akt2_jet_mu_4MomSub,      "akt2_jet_mu_4MomSub[akt2_jet_n_4MomSub]/F");
 
 outTree->Branch ("akt3_jet_n_4MomSub",       &akt3_jet_n_4MomSub,       "akt3_jet_n_4MomSub/I");
 outTree->Branch ("akt3_jet_pt_4MomSub",      &akt3_jet_pt_4MomSub,      "akt3_jet_pt_4MomSub[akt3_jet_n_4MomSub]/F");
 outTree->Branch ("akt3_jet_eta_4MomSub",     &akt3_jet_eta_4MomSub,     "akt3_jet_eta_4MomSub[akt3_jet_n_4MomSub]/F");
 outTree->Branch ("akt3_jet_phi_4MomSub",     &akt3_jet_phi_4MomSub,     "akt3_jet_phi_4MomSub[akt3_jet_n_4MomSub]/F");
 outTree->Branch ("akt3_jet_e_4MomSub",       &akt3_jet_e_4MomSub,       "akt3_jet_e_4MomSub[akt3_jet_n_4MomSub]/F");
+outTree->Branch ("akt3_jet_zg_4MomSub",      &akt3_jet_zg_4MomSub,      "akt3_jet_zg_4MomSub[akt3_jet_n_4MomSub]/F");
+outTree->Branch ("akt3_jet_thetag_4MomSub",  &akt3_jet_thetag_4MomSub,  "akt3_jet_thetag_4MomSub[akt3_jet_n_4MomSub]/F");
+outTree->Branch ("akt3_jet_mu_4MomSub",      &akt3_jet_mu_4MomSub,      "akt3_jet_mu_4MomSub[akt3_jet_n_4MomSub]/F");
 
 outTree->Branch ("akt4_jet_n_4MomSub",       &akt4_jet_n_4MomSub,       "akt4_jet_n_4MomSub/I");
 outTree->Branch ("akt4_jet_pt_4MomSub",      &akt4_jet_pt_4MomSub,      "akt4_jet_pt_4MomSub[akt4_jet_n_4MomSub]/F");
 outTree->Branch ("akt4_jet_eta_4MomSub",     &akt4_jet_eta_4MomSub,     "akt4_jet_eta_4MomSub[akt4_jet_n_4MomSub]/F");
 outTree->Branch ("akt4_jet_phi_4MomSub",     &akt4_jet_phi_4MomSub,     "akt4_jet_phi_4MomSub[akt4_jet_n_4MomSub]/F");
 outTree->Branch ("akt4_jet_e_4MomSub",       &akt4_jet_e_4MomSub,       "akt4_jet_e_4MomSub[akt4_jet_n_4MomSub]/F");
+outTree->Branch ("akt4_jet_zg_4MomSub",      &akt4_jet_zg_4MomSub,      "akt4_jet_zg_4MomSub[akt4_jet_n_4MomSub]/F");
+outTree->Branch ("akt4_jet_thetag_4MomSub",  &akt4_jet_thetag_4MomSub,  "akt4_jet_thetag_4MomSub[akt4_jet_n_4MomSub]/F");
+outTree->Branch ("akt4_jet_mu_4MomSub",      &akt4_jet_mu_4MomSub,      "akt4_jet_mu_4MomSub[akt4_jet_n_4MomSub]/F");
 
 outTree->Branch ("akt6_jet_n_4MomSub",       &akt6_jet_n_4MomSub,       "akt6_jet_n_4MomSub/I");
 outTree->Branch ("akt6_jet_pt_4MomSub",      &akt6_jet_pt_4MomSub,      "akt6_jet_pt_4MomSub[akt6_jet_n_4MomSub]/F");
 outTree->Branch ("akt6_jet_eta_4MomSub",     &akt6_jet_eta_4MomSub,     "akt6_jet_eta_4MomSub[akt6_jet_n_4MomSub]/F");
 outTree->Branch ("akt6_jet_phi_4MomSub",     &akt6_jet_phi_4MomSub,     "akt6_jet_phi_4MomSub[akt6_jet_n_4MomSub]/F");
 outTree->Branch ("akt6_jet_e_4MomSub",       &akt6_jet_e_4MomSub,       "akt6_jet_e_4MomSub[akt6_jet_n_4MomSub]/F");
+outTree->Branch ("akt6_jet_zg_4MomSub",      &akt6_jet_zg_4MomSub,      "akt6_jet_zg_4MomSub[akt6_jet_n_4MomSub]/F");
+outTree->Branch ("akt6_jet_thetag_4MomSub",  &akt6_jet_thetag_4MomSub,  "akt6_jet_thetag_4MomSub[akt6_jet_n_4MomSub]/F");
+outTree->Branch ("akt6_jet_mu_4MomSub",      &akt6_jet_mu_4MomSub,      "akt6_jet_mu_4MomSub[akt6_jet_n_4MomSub]/F");
 
 outTree->Branch ("akt8_jet_n_4MomSub",       &akt8_jet_n_4MomSub,       "akt8_jet_n_4MomSub/I");
 outTree->Branch ("akt8_jet_pt_4MomSub",      &akt8_jet_pt_4MomSub,      "akt8_jet_pt_4MomSub[akt8_jet_n_4MomSub]/F");
 outTree->Branch ("akt8_jet_eta_4MomSub",     &akt8_jet_eta_4MomSub,     "akt8_jet_eta_4MomSub[akt8_jet_n_4MomSub]/F");
 outTree->Branch ("akt8_jet_phi_4MomSub",     &akt8_jet_phi_4MomSub,     "akt8_jet_phi_4MomSub[akt8_jet_n_4MomSub]/F");
 outTree->Branch ("akt8_jet_e_4MomSub",       &akt8_jet_e_4MomSub,       "akt8_jet_e_4MomSub[akt8_jet_n_4MomSub]/F");
+outTree->Branch ("akt8_jet_zg_4MomSub",      &akt8_jet_zg_4MomSub,      "akt8_jet_zg_4MomSub[akt8_jet_n_4MomSub]/F");
+outTree->Branch ("akt8_jet_thetag_4MomSub",  &akt8_jet_thetag_4MomSub,  "akt8_jet_thetag_4MomSub[akt8_jet_n_4MomSub]/F");
+outTree->Branch ("akt8_jet_mu_4MomSub",      &akt8_jet_mu_4MomSub,      "akt8_jet_mu_4MomSub[akt2_jet_n_4MomSub]/F");
 
 outTree->Branch ("akt1_jet_n_4MomSub",       &akt1_jet_n_4MomSub,       "akt1_jet_n_4MomSub/I");
 outTree->Branch ("akt1_jet_pt_4MomSub",      &akt1_jet_pt_4MomSub,      "akt1_jet_pt_4MomSub[akt1_jet_n_4MomSub]/F");
 outTree->Branch ("akt1_jet_eta_4MomSub",     &akt1_jet_eta_4MomSub,     "akt1_jet_eta_4MomSub[akt1_jet_n_4MomSub]/F");
 outTree->Branch ("akt1_jet_phi_4MomSub",     &akt1_jet_phi_4MomSub,     "akt1_jet_phi_4MomSub[akt1_jet_n_4MomSub]/F");
 outTree->Branch ("akt1_jet_e_4MomSub",       &akt1_jet_e_4MomSub,       "akt1_jet_e_4MomSub[akt1_jet_n_4MomSub]/F");
+outTree->Branch ("akt1_jet_zg_4MomSub",      &akt1_jet_zg_4MomSub,      "akt1_jet_zg_4MomSub[akt1_jet_n_4MomSub]/F");
+outTree->Branch ("akt1_jet_thetag_4MomSub",  &akt1_jet_thetag_4MomSub,  "akt1_jet_thetag_4MomSub[akt1_jet_n_4MomSub]/F");
+outTree->Branch ("akt1_jet_mu_4MomSub",      &akt1_jet_mu_4MomSub,      "akt1_jet_mu_4MomSub[akt1_jet_n_4MomSub]/F");
 /*
 outTree->Branch ("akt4_jet_n_GridSub1",    &akt4_jet_n_GridSub1,    "akt4_jet_n_GridSub1/I");
 outTree->Branch ("akt4_jet_pt_GridSub1",   &akt4_jet_pt_GridSub1,   "akt4_jet_pt_GridSub1[akt4_jet_n_GridSub1]/F");
@@ -233,14 +257,11 @@ outTree->Branch ("akt4_jet_pt_GridSub2",   &akt4_jet_pt_GridSub2,   "akt4_jet_pt
 outTree->Branch ("akt4_jet_eta_GridSub2",  &akt4_jet_eta_GridSub2,  "akt4_jet_eta_GridSub2[akt4_jet_n_GridSub2]/F");
 outTree->Branch ("akt4_jet_phi_GridSub2",  &akt4_jet_phi_GridSub2,  "akt4_jet_phi_GridSub2[akt4_jet_n_GridSub2]/F");
 outTree->Branch ("akt4_jet_e_GridSub2",    &akt4_jet_e_GridSub2,    "akt4_jet_e_GridSub2[akt4_jet_n_GridSub2]/F");
-outTree->Branch ("akt4_jet_zg_GridSub2",      &akt4_jet_zg_GridSub2,      "akt4_jet_zg_GridSub2[akt4_jet_n_GridSub2]/F");
-outTree->Branch ("akt4_jet_thetag_GridSub2",  &akt4_jet_thetag_GridSub2,  "akt4_jet_thetag_GridSub2[akt4_jet_n_GridSub2]/F");
-outTree->Branch ("akt4_jet_mu_GridSub2",      &akt4_jet_mu_GridSub2,      "akt4_jet_mu_GridSub2[akt4_jet_n_GridSub2]/F");
 
 const float etaMax   = 4.9;
 const float minJetPt = 5;
 const float z_cut    = 0.10;
-const float beta     = 0.0;
+const float beta     = 2.0;
 
 fastjet::contrib::SoftDrop sd(beta, z_cut);
 
@@ -387,8 +408,12 @@ while (event) {
   akt6_jet_n_4MomSub = akt6_jet_n;
   akt8_jet_n_4MomSub = akt8_jet_n;
   akt1_jet_n_4MomSub = akt1_jet_n;
-
-
+  vector <fastjet::PseudoJet> subtracted_Jets_2;
+  vector <fastjet::PseudoJet> subtracted_Jets_3;
+  vector <fastjet::PseudoJet> subtracted_Jets_4;
+  vector <fastjet::PseudoJet> subtracted_Jets_6;
+  vector <fastjet::PseudoJet> subtracted_Jets_8;
+  vector <fastjet::PseudoJet> subtracted_Jets_1;
 // 4MomSub for anti-kT R = 0.2
 // loop over each jet to perform jet-level subtraction : 
   for (int alljets = 0; alljets < akt2_jet_n_4MomSub; alljets ++){
@@ -429,8 +454,18 @@ while (event) {
     akt2_jet_eta_4MomSub[alljets] = jet_tlv.Eta ();
     akt2_jet_phi_4MomSub[alljets] = jet_tlv.Phi ();
     akt2_jet_e_4MomSub[alljets]   = jet_tlv.E   ();
+    subtracted_Jets_2.push_back (fastjet::PseudoJet (jet_tlv.Px (), jet_tlv.Py (), jet_tlv.Pz (), jet_tlv.E ()));
   }
 
+//fastjet::contrib::SoftDrop sd(beta, z_cut);
+for (int ijet = 0; ijet < akt2_jet_n_4MomSub; ijet++){
+fastjet::PseudoJet sd_2 = sd(subtracted_Jets_2[ijet]);
+assert(sd_2 !=0);
+//cout << "  symmetry measure(z):     " << sd_2.structure_of<fastjet::contrib::SoftDrop>().symmetry() << endl;
+akt2_jet_zg_4MomSub[ijet] = sd_2.structure_of<fastjet::contrib::SoftDrop>().zg();
+akt2_jet_thetag_4MomSub[ijet] = sd_2.structure_of<fastjet::contrib::SoftDrop>().thetag();
+akt2_jet_mu_4MomSub[ijet] = sd_2.structure_of<fastjet::contrib::SoftDrop>().mu();
+}
 
 // 4MomSub for anti-kT R = 0.3
   for (int alljets = 0; alljets < akt3_jet_n_4MomSub; alljets ++){
@@ -468,8 +503,18 @@ while (event) {
       akt3_jet_eta_4MomSub[alljets] = jet_tlv.Eta ();
       akt3_jet_phi_4MomSub[alljets] = jet_tlv.Phi ();
       akt3_jet_e_4MomSub[alljets]   = jet_tlv.E   ();
+      subtracted_Jets_3.push_back (fastjet::PseudoJet (jet_tlv.Px (), jet_tlv.Py (), jet_tlv.Pz (), jet_tlv.E ()));
   }
 
+//fastjet::contrib::SoftDrop sd(beta, z_cut);
+for (int ijet = 0; ijet < akt3_jet_n_4MomSub; ijet++){
+fastjet::PseudoJet sd_3 = sd(subtracted_Jets_3[ijet]);
+assert(sd_3 !=0);
+//cout << "  symmetry measure(z):     " << sd_3.structure_of<fastjet::contrib::SoftDrop>().symmetry() << endl;
+akt3_jet_zg_4MomSub[ijet] = sd_3.structure_of<fastjet::contrib::SoftDrop>().zg();
+akt3_jet_thetag_4MomSub[ijet] = sd_3.structure_of<fastjet::contrib::SoftDrop>().thetag();
+akt3_jet_mu_4MomSub[ijet] = sd_3.structure_of<fastjet::contrib::SoftDrop>().mu();
+}
 
  // 4MomSub for anti-kT R = 0.4
   for (int alljets = 0; alljets < akt4_jet_n_4MomSub; alljets ++){
@@ -507,8 +552,18 @@ while (event) {
         akt4_jet_eta_4MomSub[alljets] = jet_tlv.Eta ();
         akt4_jet_phi_4MomSub[alljets] = jet_tlv.Phi ();
         akt4_jet_e_4MomSub[alljets]   = jet_tlv.E   ();
+        subtracted_Jets_4.push_back (fastjet::PseudoJet (jet_tlv.Px (), jet_tlv.Py (), jet_tlv.Pz (), jet_tlv.E ()));
       }
 
+//fastjet::contrib::SoftDrop sd(beta, z_cut);
+for (int ijet = 0; ijet < akt4_jet_n_4MomSub; ijet++){
+fastjet::PseudoJet sd_4 = sd(subtracted_Jets_4[ijet]);
+assert(sd_4 !=0);
+//cout << "  symmetry measure(z):     " << sd_4.structure_of<fastjet::contrib::SoftDrop>().symmetry() << endl;
+akt4_jet_zg_4MomSub[ijet] = sd_4.structure_of<fastjet::contrib::SoftDrop>().zg();
+akt4_jet_thetag_4MomSub[ijet] = sd_4.structure_of<fastjet::contrib::SoftDrop>().thetag();
+akt4_jet_mu_4MomSub[ijet] = sd_4.structure_of<fastjet::contrib::SoftDrop>().mu();
+} 
 
 // 4MomSub for anti-kT R = 0.6
   for (int alljets = 0; alljets < akt6_jet_n_4MomSub; alljets ++){
@@ -546,7 +601,17 @@ while (event) {
       akt6_jet_eta_4MomSub[alljets] = jet_tlv.Eta ();
       akt6_jet_phi_4MomSub[alljets] = jet_tlv.Phi ();
       akt6_jet_e_4MomSub[alljets]   = jet_tlv.E   ();
+      subtracted_Jets_6.push_back (fastjet::PseudoJet (jet_tlv.Px (), jet_tlv.Py (), jet_tlv.Pz (), jet_tlv.E ()));
   }
+//fastjet::contrib::SoftDrop sd(beta, z_cut);
+for (int ijet = 0; ijet < akt6_jet_n_4MomSub; ijet++){
+fastjet::PseudoJet sd_6 = sd(subtracted_Jets_6[ijet]);
+assert(sd_6 !=0);
+//cout << "  symmetry measure(z):     " << sd_6.structure_of<fastjet::contrib::SoftDrop>().symmetry() << endl;
+akt6_jet_zg_4MomSub[ijet] = sd_6.structure_of<fastjet::contrib::SoftDrop>().zg();
+akt6_jet_thetag_4MomSub[ijet] = sd_6.structure_of<fastjet::contrib::SoftDrop>().thetag();
+akt6_jet_mu_4MomSub[ijet] = sd_6.structure_of<fastjet::contrib::SoftDrop>().mu();
+} 
 // 4MomSub for anti-kT R = 0.8
   for (int alljets = 0; alljets < akt8_jet_n_4MomSub; alljets ++){
     jet_tlv.SetPtEtaPhiE (akt8_jet_pt[alljets], akt8_jet_eta[alljets], akt8_jet_phi[alljets], akt8_jet_e[alljets]);
@@ -583,8 +648,18 @@ while (event) {
           akt8_jet_eta_4MomSub[alljets] = jet_tlv.Eta ();
           akt8_jet_phi_4MomSub[alljets] = jet_tlv.Phi ();
           akt8_jet_e_4MomSub[alljets]   = jet_tlv.E   ();
+          subtracted_Jets_8.push_back (fastjet::PseudoJet (jet_tlv.Px (), jet_tlv.Py (), jet_tlv.Pz (), jet_tlv.E ()));
   }
 
+//fastjet::contrib::SoftDrop sd(beta, z_cut);
+for (int ijet = 0; ijet < akt8_jet_n_4MomSub; ijet++){
+fastjet::PseudoJet sd_8 = sd(subtracted_Jets_8[ijet]);
+assert(sd_8 !=0);
+//cout << "  symmetry measure(z):     " << sd_8.structure_of<fastjet::contrib::SoftDrop>().symmetry() << endl;
+akt8_jet_zg_4MomSub[ijet] = sd_8.structure_of<fastjet::contrib::SoftDrop>().zg();
+akt8_jet_thetag_4MomSub[ijet] = sd_8.structure_of<fastjet::contrib::SoftDrop>().thetag();
+akt8_jet_mu_4MomSub[ijet] = sd_8.structure_of<fastjet::contrib::SoftDrop>().mu();
+} 
 
 // 4MomSub for anti-kT R = 1
   for (int alljets = 0; alljets < akt1_jet_n_4MomSub; alljets ++){
@@ -622,7 +697,18 @@ while (event) {
        akt1_jet_eta_4MomSub[alljets] = jet_tlv.Eta ();
        akt1_jet_phi_4MomSub[alljets] = jet_tlv.Phi ();
        akt1_jet_e_4MomSub[alljets]   = jet_tlv.E   ();
+       subtracted_Jets_1.push_back (fastjet::PseudoJet (jet_tlv.Px (), jet_tlv.Py (), jet_tlv.Pz (), jet_tlv.E ()));
   }
+//fastjet::contrib::SoftDrop sd(beta, z_cut);
+for (int ijet = 0; ijet < akt1_jet_n_4MomSub; ijet++){
+fastjet::PseudoJet sd_1 = sd(subtracted_Jets_1[ijet]);
+assert(sd_1 !=0);
+//cout << "  symmetry measure(z):     " << sd_1.structure_of<fastjet::contrib::SoftDrop>().symmetry() << endl;
+akt1_jet_zg_4MomSub[ijet] = sd_1.structure_of<fastjet::contrib::SoftDrop>().zg();
+akt1_jet_thetag_4MomSub[ijet] = sd_1.structure_of<fastjet::contrib::SoftDrop>().thetag();
+akt1_jet_mu_4MomSub[ijet] = sd_1.structure_of<fastjet::contrib::SoftDrop>().mu();
+} 
+
 
 
 
@@ -716,23 +802,7 @@ while (event) {
   }
 
 
-for (int ijet = 0; ijet < akt4_jet_n_GridSub2; ijet++){
-  fastjet::PseudoJet sd_4_GridSub2 = sd(sortedAkt4_GridSub2_Jets[akt4_jet_n_GridSub2]);
-  assert(sd_4_GridSub2 !=0);
 
-  akt4_jet_zg_GridSub2[akt4_jet_n_GridSub2]     = sd_4_GridSub2.structure_of<fastjet::contrib::SoftDrop>().zg();
-  akt4_jet_thetag_GridSub2[akt4_jet_n_GridSub2] = sd_4_GridSub2.structure_of<fastjet::contrib::SoftDrop>().thetag();
-  akt4_jet_mu_GridSub2[akt4_jet_n_GridSub2]     = sd_4_GridSub2.structure_of<fastjet::contrib::SoftDrop>().mu();
-}
-
-for (int ijet = 0; ijet < akt4_jet_n; ijet++){
-  fastjet::PseudoJet sd_4 = sd(sortedAkt4Jets[akt4_jet_n]);
-  assert(sd_4 !=0);
-
-  akt4_jet_zg[akt4_jet_n]     = sd_4.structure_of<fastjet::contrib::SoftDrop>().zg();
-  akt4_jet_thetag[akt4_jet_n] = sd_4.structure_of<fastjet::contrib::SoftDrop>().thetag();
-  akt4_jet_mu[akt4_jet_n]     = sd_4.structure_of<fastjet::contrib::SoftDrop>().mu();
-}
 
 
 

@@ -1,0 +1,9 @@
+# This is the parameter file for the medium model.
+# Let's change the initial temperature:
+TI 0.21
+# and the centrality
+CENTRMIN 00.
+CENTRMAX 10.
+#note that sigma nn is a function of sqrt(s)
+SIGMANN 4.2
+A 64

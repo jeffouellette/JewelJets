@@ -1,0 +1,12 @@
+CXX=g++
+CXXFLAGS=-O3 -g -Wall `src/HepMC2TTree.cxx -o bin/HepMC2TTree` `root-config --cflags` -I$(HEPMC_INCLUDE_DIR) $(FASTJET_INCLUDE_DIR) 
+
+#LDFLAGS=-Wl,-rpath,`root-config --libdir` `root-config --glibs` -lEG -L$(HEPMC_LIBRARY) -lHepMC -L$(FASTJET_LIBRARY) -lfastjet -lRecursiveTools
+
+
+FASTJET=`fastjet-config --cxxflags --libs --plugins --runpath`
+
+HepMC2TTree: src/HepMC2TTree.cxx
+	$(CXX) $(CXXFLAGS) $(FASTJET) -lRecursiveTools
+clean :
+	rm -rf lib/* bin/*
