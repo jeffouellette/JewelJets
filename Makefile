@@ -1,6 +1,7 @@
 CXX=g++
-#CXXFLAGS=-O3 -g -Wall src/HepMC2TTree.cxx -o bin/HepMC2TTree `root-config --cflags --libs` -I$(HEPMC_INCLUDE_DIR) $(FASTJET_INCLUDE_DIR) 
-CXXFLAGS=-O3 -g -Wall src/Pythia_HepMC2TTree.cxx -o bin/Pythia_HepMC2TTree `root-config --cflags --libs` -I$(HEPMC_INCLUDE_DIR) $(FASTJET_INCLUDE_DIR) 
+CXXFLAGS=-O3 -g -Wall src/HepMC2TTree.cxx -o bin/HepMC2TTree `root-config --cflags --libs` -I$(HEPMC_INCLUDE_DIR) 
+#$(FASTJET_INCLUDE_DIR)
+##CXXFLAGS=-O3 -g -Wall src/Pythia_HepMC2TTree.cxx -o bin/Pythia_HepMC2TTree `root-config --cflags --libs` -I$(HEPMC_INCLUDE_DIR) $(FASTJET_INCLUDE_DIR) 
 
 
 #Pythia_HepMC2TTree.cxx

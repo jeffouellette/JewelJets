@@ -3,7 +3,7 @@
 LOGFILE logfile/YJ_nevt_10k_vacuum.log
 HEPMCFILE HEPMC/YJ_nevt_10k_vacuum.hepmc
 # for random number generation
-NJOB 83
+NJOB 90
 #how many events to run
 NEVENT 10000
 #change root s to LHC run 2 energies

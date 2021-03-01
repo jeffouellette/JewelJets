@@ -258,7 +258,6 @@ TDatabasePDG* pdgData = new TDatabasePDG ();
 int iEvt = 0;
 HepMC::GenEvent* event = inFile->read_next_event ();
 while (event) {
-
   vector <fastjet::PseudoJet> particles;
 
   for (HepMC::GenEvent::particle_iterator part_iterator = event->particles_begin (); part_iterator != event->particles_end (); part_iterator++) {
@@ -286,7 +285,6 @@ while (event) {
   vector<fastjet::PseudoJet> sortedAkt8Jets = fastjet::sorted_by_pt (clusterSeqAkt8.inclusive_jets ());
   fastjet::ClusterSequence clusterSeqAkt1 (particles, antiKt1);
   vector<fastjet::PseudoJet> sortedAkt1Jets = fastjet::sorted_by_pt (clusterSeqAkt1.inclusive_jets ());
-
   akt2_jet_n = 0;
   for (fastjet::PseudoJet jet : sortedAkt2Jets) {
     if (jet.perp () < minJetPt || fabs (jet.pseudorapidity ()) > etaMax || akt2_jet_n >= 100)
@@ -630,26 +628,24 @@ while (event) {
 
 
 
-
 // GridSub2 :
-  float phi_min = -TMath::Pi() - 2*TMath::Pi()/40;
-  float phi_max = -TMath::Pi();
 
-  TLorentzVector grid2_tlv[40][40];
-  TLorentzVector grid2_thermal_tlv[40][40];
+  TLorentzVector grid2_tlv[65][22];
+  TLorentzVector grid2_thermal_tlv[65][22];
   TLorentzVector grid2_Sum_tlv;
-  phi_min = -TMath::Pi() - 2*TMath::Pi()/40;
-  phi_max = -TMath::Pi();
   
 // divide eta-phi plane into 40x40 grid and sum up 4-mom for final state particles in each cell
-  for (int allphi = 0; allphi < 40; allphi ++){
-    phi_min += 2*TMath::Pi()/40 ;
-    phi_max += 2*TMath::Pi()/40 ;
-    float eta_min = -21*0.2;
-    float eta_max = -4 ;
-    for (int alleta = 0; alleta < 40; alleta ++){
-      eta_min += 0.2;
-      eta_max += 0.2;
+  float phi_min = -3.35;
+  float phi_max = -3.25;
+
+  for (int allphi = 0; allphi < 65; allphi ++){
+    phi_min += 0.1 ;
+    phi_max += 0.1 ;
+    float eta_min = -1.2;
+    float eta_max = -1.1 ;
+    for (int alleta = 0; alleta < 22; alleta ++){
+      eta_min += 0.1;
+      eta_max += 0.1;
       for (int allparticles = 0 ; allparticles < part_n; allparticles++){
         if (part_phi[allparticles] > phi_max  || part_phi[allparticles] < phi_min ||  part_eta[allparticles] > eta_max || part_eta[allparticles] < eta_min || part_status[allparticles] == 3 )continue;
         grid2_Sum_tlv.SetPtEtaPhiE (part_pt[allparticles], part_eta[allparticles], part_phi[allparticles], part_e[allparticles]);
@@ -659,17 +655,17 @@ while (event) {
   }
 
 // divide eta-phi plane into 40x40 grid and sum up 4-mom for thermal momenta in each cell
-  phi_min = -TMath::Pi() - 2*TMath::Pi()/40;
-  phi_max = -TMath::Pi();
+  phi_min = -3.35 ;
+  phi_max = -3.25;
 
-  for (int allphi = 0; allphi < 40; allphi ++){
-    phi_min += 2*TMath::Pi()/40 ;
-    phi_max += 2*TMath::Pi()/40 ;
-    float eta_min = -21*0.2;
-    float eta_max = -4 ;
-    for (int alleta = 0; alleta < 40; alleta ++){
-      eta_min += 0.2;
-      eta_max += 0.2;
+  for (int allphi = 0; allphi < 65; allphi ++){
+    phi_min += 0.1 ;
+    phi_max += 0.1 ;
+    float eta_min = -1.2;
+    float eta_max = -1.1;
+    for (int alleta = 0; alleta < 22; alleta ++){
+      eta_min += 0.1;
+      eta_max += 0.1;
       for (int allparticles = 0 ; allparticles < part_n; allparticles++){
         if (part_phi[allparticles] > phi_max  || part_phi[allparticles] < phi_min ||  part_eta[allparticles] > eta_max || part_eta[allparticles] < eta_min || part_status[allparticles] != 3 )continue;
         grid2_Sum_tlv.SetPtEtaPhiE (part_pt[allparticles], part_eta[allparticles], part_phi[allparticles], part_e[allparticles]);
@@ -682,8 +678,8 @@ while (event) {
 // for each cell:
 // if pT Sum(final state particles) < Sum(thermal momenta), then set that cell's 4mom to (0,0,0,0)
 // if pT Sum(final state particles) > Sum(thermal momenta), then set that cell's 4mom to : 4-mom(Sum(final state particles)) - 4-mom(Sum(thermal momenta))
-  for (int allphi = 0; allphi< 40; allphi++){
-    for(int alleta = 0; alleta < 40 ; alleta++){
+  for (int allphi = 0; allphi< 65; allphi++){
+    for(int alleta = 0; alleta < 22 ; alleta++){
 
       if (grid2_tlv[allphi][alleta].Pt() < grid2_thermal_tlv[allphi][alleta].Pt() ) grid2_tlv[allphi][alleta].SetPtEtaPhiE(0,0,0,0);
       else grid2_tlv[allphi][alleta] -= grid2_thermal_tlv[allphi][alleta]; 
@@ -691,17 +687,17 @@ while (event) {
   }
 
 // cluster new jets using cells as particles
-      vector <fastjet::PseudoJet> grid2;
+      vector <fastjet::PseudoJet> cells2;
 
-  for (int allphi = 0; allphi< 40; allphi++){
-    for(int alleta = 0; alleta < 40 ; alleta++){
+  for (int allphi = 0; allphi< 65; allphi++){
+    for(int alleta = 0; alleta < 22 ; alleta++){
       if (fabs (grid2_tlv[allphi][alleta].Eta ()) > etaMax || grid2_tlv[allphi][alleta].Pt () == 0 ) continue; 
 
-      grid2.push_back (fastjet::PseudoJet (grid2_tlv[allphi][alleta].Px (), grid2_tlv[allphi][alleta].Py (), grid2_tlv[allphi][alleta].Pz (), grid2_tlv[allphi][alleta].E ()));
+      cells2.push_back (fastjet::PseudoJet (grid2_tlv[allphi][alleta].Px (), grid2_tlv[allphi][alleta].Py (), grid2_tlv[allphi][alleta].Pz (), grid2_tlv[allphi][alleta].E ()));
     }
   }
 
-  fastjet::ClusterSequence clusterSeqAkt4_GridSub2 (grid2, antiKt4_GridSub2);
+  fastjet::ClusterSequence clusterSeqAkt4_GridSub2 (cells2, antiKt4_GridSub2);
   vector<fastjet::PseudoJet> sortedAkt4_GridSub2_Jets = fastjet::sorted_by_pt (clusterSeqAkt4_GridSub2.inclusive_jets ());
 
   akt4_jet_n_GridSub2 = 0;
@@ -717,23 +713,22 @@ while (event) {
 
 
 for (int ijet = 0; ijet < akt4_jet_n_GridSub2; ijet++){
-  fastjet::PseudoJet sd_4_GridSub2 = sd(sortedAkt4_GridSub2_Jets[akt4_jet_n_GridSub2]);
+  fastjet::PseudoJet sd_4_GridSub2 = sd(sortedAkt4_GridSub2_Jets[ijet]);
   assert(sd_4_GridSub2 !=0);
 
-  akt4_jet_zg_GridSub2[akt4_jet_n_GridSub2]     = sd_4_GridSub2.structure_of<fastjet::contrib::SoftDrop>().zg();
-  akt4_jet_thetag_GridSub2[akt4_jet_n_GridSub2] = sd_4_GridSub2.structure_of<fastjet::contrib::SoftDrop>().thetag();
-  akt4_jet_mu_GridSub2[akt4_jet_n_GridSub2]     = sd_4_GridSub2.structure_of<fastjet::contrib::SoftDrop>().mu();
+  akt4_jet_zg_GridSub2[ijet]     = sd_4_GridSub2.structure_of<fastjet::contrib::SoftDrop>().zg();
+  akt4_jet_thetag_GridSub2[ijet] = sd_4_GridSub2.structure_of<fastjet::contrib::SoftDrop>().thetag();
+  akt4_jet_mu_GridSub2[ijet]     = sd_4_GridSub2.structure_of<fastjet::contrib::SoftDrop>().mu();
 }
 
 for (int ijet = 0; ijet < akt4_jet_n; ijet++){
-  fastjet::PseudoJet sd_4 = sd(sortedAkt4Jets[akt4_jet_n]);
+  fastjet::PseudoJet sd_4 = sd(sortedAkt4Jets[ijet]);
   assert(sd_4 !=0);
 
-  akt4_jet_zg[akt4_jet_n]     = sd_4.structure_of<fastjet::contrib::SoftDrop>().zg();
-  akt4_jet_thetag[akt4_jet_n] = sd_4.structure_of<fastjet::contrib::SoftDrop>().thetag();
-  akt4_jet_mu[akt4_jet_n]     = sd_4.structure_of<fastjet::contrib::SoftDrop>().mu();
+  akt4_jet_zg[ijet]     = sd_4.structure_of<fastjet::contrib::SoftDrop>().zg();
+  akt4_jet_thetag[ijet] = sd_4.structure_of<fastjet::contrib::SoftDrop>().thetag();
+  akt4_jet_mu[ijet]     = sd_4.structure_of<fastjet::contrib::SoftDrop>().mu();
 }
-
 
 
 
